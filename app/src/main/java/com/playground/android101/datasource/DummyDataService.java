@@ -1,6 +1,7 @@
 package com.playground.android101.datasource;
 
 import com.playground.android101.model.DummyData;
+import com.playground.android101.model.Type;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,8 +21,14 @@ public class DummyDataService {
 
     private void fillWithDummyData(int amount) {
         int initialDimension = 48; //needed only to make different urls
-        for (int i = 1; i <= amount; i++) {
-            data.add(new DummyData("https://picsum.photos/"+(initialDimension+i), "Dummy title "+i, "Dummy description "+i));
+        Type dataType = Type.CONTENT;
+        for (int i = 0; i <= amount; i++) {
+            if (i % 5 == 0) {
+                data.add(new DummyData(null,"Big title " + (i + 1), null, Type.TITLE));
+            }
+            else {
+                data.add(new DummyData("https://picsum.photos/"+(initialDimension+i), "Dummy title "+(i+1), "Dummy description "+(i+1), Type.CONTENT));
+            }
         }
     }
 
