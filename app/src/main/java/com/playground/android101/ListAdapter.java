@@ -25,7 +25,7 @@ import java.util.Locale;
  *
  * @author Konstantin Vankov (xcg3679)
  */
-public class ListAdapter extends RecyclerView.Adapter<ListAdapter.GenericViewHolder> {
+public class ListAdapter extends RecyclerView.Adapter<ListAdapter.BaseViewHolder> {
     private final int TYPE_TITLE = 1;
     private final int TYPE_CONTENT = 2;
 
@@ -51,18 +51,22 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.GenericViewHol
 
     @NonNull
     @Override
-    public GenericViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
+    public BaseViewHolder onCreateViewHolder(@NonNull ViewGroup parent, int viewType) {
         switch(viewType) {
+            case TYPE_TITLE: {
+                View parentView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_title, parent, false);
+                return new TitleViewHolder(parentView);
+            }
             case TYPE_CONTENT: {
-                View parentView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item, parent, false);
-                return new GenericViewHolder(parentView);
+                View parentView = LayoutInflater.from(parent.getContext()).inflate(R.layout.list_item_content, parent, false);
+                return new ContentViewHolder(parentView);
             }
             default: throw new RuntimeException(String.format("Not implemented view type '%d'", viewType));
         }
     }
 
     @Override
-    public void onBindViewHolder(@NonNull GenericViewHolder holder, int position) {
+    public void onBindViewHolder(@NonNull BaseViewHolder holder, int position) {
         holder.bind(this.data.get(position));
     }
 
@@ -71,9 +75,17 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.GenericViewHol
         return data.size();
     }
 
-    static class GenericViewHolder extends RecyclerView.ViewHolder {
+    static abstract class BaseViewHolder extends RecyclerView.ViewHolder {
+        public BaseViewHolder(@NonNull View itemView) {
+            super(itemView);
+        }
 
-        public GenericViewHolder(@NonNull View itemView) {
+        public abstract void bind(DummyData data);
+    }
+
+    static class ContentViewHolder extends BaseViewHolder {
+
+        public ContentViewHolder(@NonNull View itemView) {
             super(itemView);
         }
 
@@ -89,6 +101,7 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.GenericViewHol
             return super.itemView.findViewById(R.id.description);
         }
 
+        @Override
         public void bind(DummyData data) {
             //load asynchronously the image from the internet without blocking the main thread
             Picasso.get()
@@ -101,6 +114,21 @@ public class ListAdapter extends RecyclerView.Adapter<ListAdapter.GenericViewHol
                     .into(getImageView());
             getTitleView().setText(data.getTitle());
             getDescriptionView().setText(data.getDescription());
+        }
+    }
+
+    static class TitleViewHolder extends BaseViewHolder {
+
+        public TitleViewHolder(@NonNull View itemView) {
+            super(itemView);
+        }
+        private TextView getTitleView() {
+            return super.itemView.findViewById(R.id.title);
+        }
+
+        @Override
+        public void bind(DummyData data) {
+            getTitleView().setText(data.getTitle());
         }
     }
 }

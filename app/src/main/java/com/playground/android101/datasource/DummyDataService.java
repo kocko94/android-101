@@ -21,7 +21,6 @@ public class DummyDataService {
 
     private void fillWithDummyData(int amount) {
         int initialDimension = 48; //needed only to make different urls
-        Type dataType = Type.CONTENT;
         for (int i = 0; i <= amount; i++) {
             if (i % 5 == 0) {
                 data.add(new DummyData(null,"Big title " + (i + 1), null, Type.TITLE));
